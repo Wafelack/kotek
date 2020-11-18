@@ -24,4 +24,4 @@ Code and pre blocks
 -------------------
 
 - `<leader>code` : Writes a code template and places the cursor between the backticks
-- `<leader>pre` : Writes a pre template and places the cursor between the two backticks blocks (`\`\`\``)  
+- `<leader>pre` : Writes a pre template and places the cursor between the two backticks blocks (\`\`\`)  
