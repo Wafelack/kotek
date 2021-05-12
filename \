@@ -1,0 +1,32 @@
+use crate::{parser::{Expr, ExprT}, Result, Error, error};
+
+pub enum Value {
+    Integer(i32),
+    Real(f32),
+    String(String),
+    Quote(Vec<Expr>),
+    Symbol(String),
+}
+pub struct Evaluator {
+    stack: Vec<Value>,
+    memory: Vec<Expr>,
+    vars: Vec<(usize, usize)>,
+    input: Vec<Expr>,
+    builtins: Vec<fn(&mut Evaluator) -> Result<()>>
+}
+impl Evaluator {
+    pub fn new(input: Vec<Expr>, vars: Vec<(usize, usize)>, stack: Vec<Value>, memory: Vec<Expr>) -> Self {
+        Self {
+            input,
+            vars,
+            stack,
+            memory,
+            builtins: vec![],
+        }
+    }
+    fn eval_expr(&mut self, expr: Expr) -> Result<()> {
+        match expr.r#type {
+            
+        }
+    }
+}

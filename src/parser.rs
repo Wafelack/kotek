@@ -11,11 +11,25 @@ pub enum ExprT {
     Var(u16),
     Builtin(u16)
 }
+impl ExprT {
+    pub fn get_lit(self) -> String {
+        match self {
+            Self::Symbol(sym) => sym,
+            Self::String(s) => format!("\"{}\"", s),
+            Self::Integer(i) => format!("{}", i),
+            Self::Real(r) => format!("{}", r),
+            Self::Quote(content) => format!("[{}]", content.into_iter().map(|e| e.r#type.get_lit()).collect::<Vec<String>>().join(" ")),
+            Self::Var(idx) => format!("${}", idx),
+            Self::Store(idx, content) => format!("${} => ({})", idx, content.into_iter().map(|e| e.r#type.get_lit()).collect::<Vec<String>>().join(" ")),
+            Self::Builtin(idx) => format!("builtin#{}", idx),
+        }
+    }
+}
 #[derive(Clone, Debug)]
 pub struct Expr {
-    r#type: ExprT,
-    line: usize,
-    column: usize,
+    pub r#type: ExprT,
+    pub line: usize,
+    pub column: usize,
 }
 impl Expr {
     pub fn new(r#type: ExprT, line: usize, column: usize) -> Self {
