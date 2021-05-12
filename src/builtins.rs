@@ -2,8 +2,8 @@ use crate::{eval::{Evaluator, Value}, Result, error, Error};
 
 impl Evaluator {
     pub fn add(&mut self, line: usize, column: usize) -> Result<()> {
-        let lhs = self.pop(line, column)?;
         let rhs = self.pop(line, column)?;
+        let lhs = self.pop(line, column)?;
 
         match lhs {
             Value::Integer(lhs) => match rhs {
@@ -18,8 +18,8 @@ impl Evaluator {
         }
     }
     pub fn sub(&mut self, line: usize, column: usize) -> Result<()> {
-        let lhs = self.pop(line, column)?;
         let rhs = self.pop(line, column)?;
+        let lhs = self.pop(line, column)?;
 
         match lhs {
             Value::Integer(lhs) => match rhs {
@@ -34,8 +34,8 @@ impl Evaluator {
         }
     }
     pub fn mul(&mut self, line: usize, column: usize) -> Result<()> {
-        let lhs = self.pop(line, column)?;
         let rhs = self.pop(line, column)?;
+        let lhs = self.pop(line, column)?;
 
         match lhs {
             Value::Integer(lhs) => match rhs {
@@ -50,8 +50,8 @@ impl Evaluator {
         }
     }
     pub fn div(&mut self, line: usize, column: usize) -> Result<()> {
-        let lhs = self.pop(line, column)?;
         let rhs = self.pop(line, column)?;
+        let lhs = self.pop(line, column)?;
 
         match lhs {
             Value::Integer(lhs) => match rhs {
@@ -65,6 +65,19 @@ impl Evaluator {
             _ => error!(line, column, "Expected a Real or an Integer, found a {}.", lhs.get_type()),
         }
     }
+    pub fn cat(&mut self, line: usize, column: usize) -> Result<()> {
+        let rhs = self.pop(line, column)?;
+        let lhs = self.pop(line, column)?;
+
+        match lhs {
+            Value::String(lhs) => match rhs {
+                Value::String(rhs) => self.push(Value::String(format!("{}{}", lhs, rhs))),
+                _ => error!(line, column, "Expected a String, found a {}.", rhs.get_type()),
+            }
+            _ => error!(line, column, "Expected a String, found a {}.", lhs.get_type()),
+        }
+    }
+
     pub fn app(&mut self, line: usize, column: usize) -> Result<()> {
         let val = self.pop(line, column)?;
 

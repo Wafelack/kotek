@@ -22,8 +22,8 @@ impl Value {
         match self {
             Value::Integer(z) => format!("{}", z),
             Value::Real(r) => format!("{}", r),
-            Value::String(s) => format!("{}{}{}", if quotes { "\"" } else { "" }, s, if quotes { "\"" } else { "" }),
-            Value::Symbol(sym) => sym,
+            Value::String(s) => format!("{}{}{}", if quotes { "\x1b[0;32m\"" } else { "" }, s, if quotes { "\"\x1b[0m" } else { "" }),
+            Value::Symbol(sym) => format!("#{}", sym),
             Value::Quote(content) => format!("[{}]", content.into_iter().map(|e| e.r#type.get_lit()).collect::<Vec<String>>().join(" ")),
         }
     }
@@ -40,7 +40,7 @@ impl Evaluator {
             input,
             vars: vec![],
             stack: Vec::with_capacity(256),
-            builtins: vec![Self::add, Self::sub, Self::mul, Self::div, Self::dup, Self::app],
+            builtins: vec![Self::add, Self::sub, Self::mul, Self::div, Self::dup, Self::app, Self::cat],
         }
     }
     pub fn update(&mut self, expressions: Vec<Expr>) {

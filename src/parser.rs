@@ -71,6 +71,7 @@ impl Parser {
         to_ret.register_builtin("/");
         to_ret.register_builtin("dup");
         to_ret.register_builtin("app");
+        to_ret.register_builtin("cat");
         to_ret
     }
     fn register_builtin(&mut self, builtin: impl ToString) {
