@@ -9,10 +9,12 @@ fn main() -> Result<()> {
     let mut stack = Vec::with_capacity(256);
     let mut vars = vec![];
     let mut evaluator = Evaluator::new(vec![], vars.clone(), stack.clone());
+    let mut parser = Parser::new("");
     loop {
         let mut buffer = String::new();
         io::stdin().read_line(&mut buffer).unwrap();
-        let expressions = Parser::new(buffer.trim()).parse()?;
+        parser.update_code(buffer.trim());
+        let expressions = parser.parse()?;
         evaluator = Evaluator::new(expressions, vars, stack);
         let (new_stack, new_vars) = evaluator.eval()?;
         println!("=> {}", new_stack.last().and_then(|v| Some(v.clone().get_lit(true))).unwrap_or("".to_string()));

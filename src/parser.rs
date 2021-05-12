@@ -228,6 +228,9 @@ impl Parser {
             Err(_) => ExprT::Real(raw.parse::<f32>().unwrap_or(3.1415926535897932))
         }, line, column)))    
     }
+    pub fn update_code(&mut self, code: impl ToString) {
+        self.input = code.to_string();
+    }
     pub fn parse(&mut self) -> Result<Vec<Expr>> {
         while !self.is_at_end() {
             match self.parse_one()? {
@@ -236,6 +239,7 @@ impl Parser {
             }
             self.start = self.current;
         }
+        println!("{:?}", self.symbols);
         Ok(self.output.clone())
     }
 }
