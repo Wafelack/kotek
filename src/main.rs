@@ -4,23 +4,56 @@ mod builtins;
 use parser::Parser;
 use eval::Evaluator;
 use std::io;
+use rustyline::{error::ReadlineError, Editor};
 
-fn main() -> Result<()> {
+fn print_err(e: Error) {
+    eprintln!("\x1b[0;31m{}:{} | {}\x1b[0m", e.0, e.1, e.2);
+}
+
+fn repl() {
     let mut evaluator = Evaluator::new(vec![]);
     let mut parser = Parser::new("");
+    let mut reader = Editor::<()>::new();
     loop {
-        let mut buffer = String::new();
-        io::stdin().read_line(&mut buffer).unwrap();
-        parser.update_code(buffer.trim());
-        let exprs = parser.parse()?;
-        evaluator.update(exprs);
-        let top = evaluator.eval()?;
-        match top {
-            Some(v) => println!("=> {}", v.get_lit(true)),
-            None => {},
+        let line = reader.readline("kitten> ");
+        match line {
+            Ok(line) => {
+                reader.add_history_entry(line.as_str());
+                if line == "quit" {
+                    return;
+                }
+
+                parser.update_code(line.as_str());
+                let expressions = match parser.parse() {
+                    Ok(exprs) => exprs,
+                    Err(e) => {
+                        print_err(e);
+                        continue;
+                    }
+                };
+                evaluator.update(expressions);
+                match evaluator.eval() {
+                    Ok(val) => match val {
+                        Some(top) => println!("=> {} :: {}", top.clone().get_lit(true), top.get_type()),
+                        None => {}
+                    }
+                    Err(e) => print_err(e),
+                } 
+            }
+            Err(ReadlineError::Interrupted) => {
+                println!("=> #Interrupt");
+            }
+            Err(ReadlineError::Eof) => return,
+            Err(_) => {
+                eprintln!("An error occured while reading input, please retry.");
+            }
         }
-        buffer.clear();
     }
+}
+
+fn main() -> Result<()> {
+    repl();
+    Ok(())
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
