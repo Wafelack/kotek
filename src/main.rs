@@ -14,7 +14,7 @@ fn repl() {
     let mut symbols = vec![];
     let mut reader = Editor::<()>::new();
     loop {
-        let line = reader.readline("kitten> ");
+        let line = reader.readline("kitty> ");
         match line {
             Ok(line) => {
                 reader.add_history_entry(line.as_str());
