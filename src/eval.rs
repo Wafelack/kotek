@@ -40,7 +40,7 @@ impl Evaluator {
             input,
             vars: vec![],
             stack: Vec::with_capacity(256),
-            builtins: vec![Self::add, Self::sub, Self::mul, Self::div, Self::dup],
+            builtins: vec![Self::add, Self::sub, Self::mul, Self::div, Self::dup, Self::app],
         }
     }
     pub fn update(&mut self, expressions: Vec<Expr>) {
@@ -56,7 +56,7 @@ impl Evaluator {
             None => error!(line, column, "Stack_underflow")
         }
     }
-    fn eval_expr(&mut self, expr: Expr) -> Result<()> {
+    pub fn eval_expr(&mut self, expr: Expr) -> Result<()> {
         match expr.r#type {
             ExprT::Integer(i) => self.push(Value::Integer(i)),
             ExprT::Real(r) => self.push(Value::Real(r)),
