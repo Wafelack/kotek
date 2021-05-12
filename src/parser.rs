@@ -41,16 +41,24 @@ const FINISHING: [Option<char>; 7] = [Some('('), Some(']'), Some(')'), Some(' ')
 
 impl Parser {
     pub fn new(input: impl ToString) -> Self {
-        Self {
+        let mut to_ret = Self {
             input: input.to_string(),
             output: vec![],
             symbols: vec![],
-            builtins: vec!["add".to_string()],
+            builtins: vec![],
             line: 0,
             column: 0,
             start: 0,
             current: 0,
-        }
+        };
+        to_ret.register_builtin("+");
+        to_ret.register_builtin("-");
+        to_ret.register_builtin("*");
+        to_ret.register_builtin("/");
+        to_ret
+    }
+    fn register_builtin(&mut self, builtin: impl ToString) {
+        self.builtins.push(builtin.to_string());
     }
     fn spaces(&mut self) -> Result<()> {
         while !self.is_at_end() && self.peek(0) == Some(' ') {
