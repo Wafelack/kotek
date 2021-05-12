@@ -1,14 +1,16 @@
-kitty
+kotek
 =====
 
-Kitty is a simple stack based conkittytenative programming language.
+kotek (polish): kitten, cat.
+
+Kotek is a simple stack based concatenative programming language.
 
 Installation
 ------------
 
 ```bash
-$ git clone https://github.com/wafelack/kitty.git
-$ cargo install --path kitty/
+$ git clone https://github.com/wafelack/kotek.git
+$ cargo install --path kotek/
 ```
 
 Tutorial
