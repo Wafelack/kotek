@@ -229,7 +229,10 @@ impl Parser {
         }, line, column)))    
     }
     pub fn update_code(&mut self, code: impl ToString) {
+        self.input = "".to_string();
         self.input = code.to_string();
+        self.start = 0;
+        self.current = 0;
     }
     pub fn parse(&mut self) -> Result<Vec<Expr>> {
         while !self.is_at_end() {
@@ -239,7 +242,6 @@ impl Parser {
             }
             self.start = self.current;
         }
-        println!("{:?}", self.symbols);
         Ok(self.output.clone())
     }
 }

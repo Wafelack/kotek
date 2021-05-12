@@ -35,13 +35,16 @@ pub struct Evaluator {
     builtins: Vec<fn(&mut Evaluator, usize, usize) -> Result<()>>
 }
 impl Evaluator {
-    pub fn new(input: Vec<Expr>, vars: Vec<Vec<Expr>>, stack: Vec<Value>) -> Self {
+    pub fn new(input: Vec<Expr>) -> Self {
         Self {
             input,
-            vars,
-            stack,
+            vars: vec![],
+            stack: Vec::with_capacity(256),
             builtins: vec![Self::add, Self::sub, Self::mul, Self::div, Self::dup],
         }
+    }
+    pub fn update(&mut self, expressions: Vec<Expr>) {
+        self.input = expressions;
     }
     pub fn push(&mut self, val: Value) -> Result<()> {
         self.stack.push(val);
@@ -55,12 +58,12 @@ impl Evaluator {
     }
     fn eval_expr(&mut self, expr: Expr) -> Result<()> {
         match expr.r#type {
-            ExprT::Integer(i) => self.stack.push(Value::Integer(i)),
-            ExprT::Real(r) => self.stack.push(Value::Real(r)),
-            ExprT::String(s) => self.stack.push(Value::String(s)),
-            ExprT::Quote(content) => self.stack.push(Value::Quote(content)),
-            ExprT::Symbol(sym) => self.stack.push(Value::Symbol(sym)),
-            ExprT::Builtin(idx) => self.builtins[idx as usize](self, expr.line, expr.column)?,
+            ExprT::Integer(i) => self.push(Value::Integer(i)),
+            ExprT::Real(r) => self.push(Value::Real(r)),
+            ExprT::String(s) => self.push(Value::String(s)),
+            ExprT::Quote(content) => self.push(Value::Quote(content)),
+            ExprT::Symbol(sym) => self.push(Value::Symbol(sym)),
+            ExprT::Builtin(idx) => self.builtins[idx as usize](self, expr.line, expr.column),
             ExprT::Store(idx, content) => {
                 let idx = idx as usize;
                 if idx < self.vars.len() {
@@ -68,17 +71,17 @@ impl Evaluator {
                 } else {
                     self.vars.push(content);
                 }
+                Ok(())
             }
             ExprT::Var(idx) => {
                 self.vars.clone().into_iter().nth(idx as usize).unwrap().iter().map(|expr| {
                     self.eval_expr(expr.clone())
-                }).collect::<Result<()>>()?;
+                }).collect::<Result<()>>()
             }
         }
-        Ok(())
     }
-    pub fn eval(&mut self) -> Result<(Vec<Value>, Vec<Vec<Expr>>)> {
+    pub fn eval(&mut self) -> Result<Option<Value>> {
         self.input.clone().into_iter().map(|expr| self.eval_expr(expr)).collect::<Result<()>>()?;
-        Ok((self.stack.clone(), self.vars.clone()))
+        Ok(self.stack.last().and_then(|v| Some(v.clone())))
     }
 }
