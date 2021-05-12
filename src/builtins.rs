@@ -91,4 +91,18 @@ impl Evaluator {
         self.push(to_dup.clone())?;
         self.push(to_dup)
     }
+    pub fn pop_stack(&mut self, line: usize, column: usize) -> Result<()> {
+        self.pop(line, column)?;
+        Ok(())
+    }
+    pub fn swap(&mut self, line: usize, column: usize) -> Result<()> {
+        let a = self.pop(line, column)?;
+        let b = self.pop(line, column)?;
+        self.push(a)?;
+        self.push(b)
+    }
+    pub fn print_stack(&mut self, _: usize, _: usize) -> Result<()> {
+        println!("{}", self.stack.clone().into_iter().map(|v| v.get_lit(true)).collect::<Vec<String>>().join(" "));
+        Ok(())
+    }
 }

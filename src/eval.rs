@@ -29,7 +29,7 @@ impl Value {
     }
 }
 pub struct Evaluator {
-    stack: Vec<Value>,
+    pub stack: Vec<Value>,
     vars: Vec<Vec<Expr>>,
     input: Vec<Expr>,
     builtins: Vec<fn(&mut Evaluator, usize, usize) -> Result<()>>
@@ -40,7 +40,7 @@ impl Evaluator {
             input,
             vars: vec![],
             stack: Vec::with_capacity(256),
-            builtins: vec![Self::add, Self::sub, Self::mul, Self::div, Self::dup, Self::app, Self::cat],
+            builtins: vec![Self::add, Self::sub, Self::mul, Self::div, Self::dup, Self::app, Self::cat, Self::pop_stack, Self::swap, Self::print_stack],
         }
     }
     pub fn update(&mut self, expressions: Vec<Expr>) {
