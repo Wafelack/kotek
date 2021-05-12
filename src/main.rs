@@ -3,7 +3,6 @@ mod eval;
 mod builtins;
 use parser::Parser;
 use eval::Evaluator;
-use std::io;
 use rustyline::{error::ReadlineError, Editor};
 
 fn print_err(e: Error) {

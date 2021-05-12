@@ -102,7 +102,7 @@ impl Evaluator {
         self.push(b)
     }
     pub fn print_stack(&mut self, _: usize, _: usize) -> Result<()> {
-        println!("{}", self.stack.clone().into_iter().map(|v| v.get_lit(true)).collect::<Vec<String>>().join(" "));
+        println!("[{}]", self.stack.clone().into_iter().map(|v| v.get_lit(true)).collect::<Vec<String>>().join(" "));
         Ok(())
     }
 }
