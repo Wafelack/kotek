@@ -65,6 +65,23 @@ impl Evaluator {
             _ => error!(line, column, "Expected a Real or an Integer, found a {}.", lhs.get_type()),
         }
     }
+    pub fn r#mod(&mut self, line: usize, column: usize) -> Result<()> {
+        let rhs = self.pop(line, column)?;
+        let lhs = self.pop(line, column)?;
+
+        match lhs {
+            Value::Integer(lhs) => match rhs {
+                Value::Integer(rhs) => self.push(Value::Integer(lhs % rhs)),
+                _ => error!(line, column, "Expected an Integer, found a {}.", rhs.get_type()),
+            }
+            Value::Real(lhs) => match rhs {
+                Value::Real(rhs) => self.push(Value::Real(lhs % rhs)),
+                _ => error!(line, column, "Expected a Real, found a {}.", rhs.get_type()),
+            }
+            _ => error!(line, column, "Expected a Real or an Integer, found a {}.", lhs.get_type()),
+        }
+    }
+
     pub fn cat(&mut self, line: usize, column: usize) -> Result<()> {
         let rhs = self.pop(line, column)?;
         let lhs = self.pop(line, column)?;
@@ -105,4 +122,95 @@ impl Evaluator {
         println!("[{}]", self.stack.clone().into_iter().map(|v| v.get_lit(true)).collect::<Vec<String>>().join(" "));
         Ok(())
     }
+    pub fn eq(&mut self, line: usize, column: usize) -> Result<()> {
+        let rhs = self.pop(line, column)?;
+        let lhs = self.pop(line, column)?;
+        self.push(check_eq(lhs, rhs))
+    }
+    pub fn not(&mut self, line: usize, column: usize) -> Result<()> {
+        let popped = self.pop(line, column)?;
+
+        match popped {
+            Value::Symbol(boolean) => if boolean.as_str() == "t" {
+                self.push(Value::Symbol("f".to_string()))
+            } else if boolean.as_str() == "f" {
+                self.push(Value::Symbol("t".to_string()))
+            } else {
+                error!(line, column, "Expected #t or #f, found #{}.", boolean)
+            }
+            _ => error!(line, column, "Expected a Symbol, found a {}.", popped.get_type()) 
+        }
+    }
+    pub fn gt(&mut self, line: usize, column: usize) -> Result<()> {
+        let rhs = self.pop(line, column)?;
+        let lhs = self.pop(line, column)?;
+
+        match lhs {
+            Value::Integer(lhs) => match rhs {
+                Value::Integer(rhs) => self.push(to_sym(lhs > rhs)),
+                _ => error!(line, column, "Expected an Integer, found a {}.", rhs.get_type()),
+            }
+            Value::Real(lhs) => match rhs {
+                Value::Real(rhs) => self.push(to_sym(lhs > rhs)),
+                _ => error!(line, column, "Expected a Real, found a {}.", rhs.get_type()),
+            }
+            Value::String(lhs) => match rhs {
+                Value::String(rhs) => self.push(to_sym(lhs > rhs)),
+                _ => error!(line, column, "Expected a String, found a {}.", rhs.get_type()),
+            }
+            _ => error!(line, column, "Expected a Real or an Integer, found a {}.", lhs.get_type()),
+        }
+    }
+
+    pub fn lt(&mut self, line: usize, column: usize) -> Result<()> {
+        let rhs = self.pop(line, column)?;
+        let lhs = self.pop(line, column)?;
+
+        match lhs {
+            Value::Integer(lhs) => match rhs {
+                Value::Integer(rhs) => self.push(to_sym(lhs < rhs)),
+                _ => error!(line, column, "Expected an Integer, found a {}.", rhs.get_type()),
+            }
+            Value::Real(lhs) => match rhs {
+                Value::Real(rhs) => self.push(to_sym(lhs < rhs)),
+                _ => error!(line, column, "Expected a Real, found a {}.", rhs.get_type()),
+            }
+            Value::String(lhs) => match rhs {
+                Value::String(rhs) => self.push(to_sym(lhs < rhs)),
+                _ => error!(line, column, "Expected a String, found a {}.", rhs.get_type()),
+            }
+            _ => error!(line, column, "Expected a Real or an Integer, found a {}.", lhs.get_type()),
+        }
+    }
+}
+
+fn to_sym(b: bool) -> Value {
+    if b { 
+        Value::Symbol("t".to_string())
+    } else {
+        Value::Symbol("f".to_string())
+    }
+}
+
+fn check_eq(lhs: Value, rhs: Value) -> Value {
+    let res = match lhs {
+        Value::Integer(lhs) => match rhs {
+            Value::Integer(rhs) => lhs == rhs,
+            _ => false
+        }
+        Value::Real(lhs) => match rhs {
+            Value::Real(rhs) => lhs == rhs,
+            _ => false,
+        }
+        Value::String(lhs) => match rhs {
+            Value::String(rhs) => lhs == rhs,
+            _ => false,
+        }
+        Value::Symbol(lhs) => match rhs {
+            Value::Symbol(rhs) => lhs == rhs,
+            _ => false,
+        }
+        _ => false
+    };
+    to_sym(res)
 }

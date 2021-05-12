@@ -69,12 +69,17 @@ impl Parser {
         to_ret.register_builtin("-");
         to_ret.register_builtin("*");
         to_ret.register_builtin("/");
+        to_ret.register_builtin("%");
         to_ret.register_builtin("dup");
         to_ret.register_builtin("app");
         to_ret.register_builtin("cat");
         to_ret.register_builtin("pop");
         to_ret.register_builtin("swap");
         to_ret.register_builtin("print_stack");
+        to_ret.register_builtin("eq");
+        to_ret.register_builtin("not");
+        to_ret.register_builtin("gt");
+        to_ret.register_builtin("lt");
         to_ret
     }
     fn register_builtin(&mut self, builtin: impl ToString) {
