@@ -12,7 +12,7 @@ fn print_err(e: Error) {
 
 fn repl() {
     let mut evaluator = Evaluator::new(vec![]);
-    let mut parser = Parser::new("");
+    let mut symbols = vec![];
     let mut reader = Editor::<()>::new();
     loop {
         let line = reader.readline("kitten> ");
@@ -23,14 +23,15 @@ fn repl() {
                     return;
                 }
 
-                parser.update_code(line.as_str());
-                let expressions = match parser.parse() {
-                    Ok(exprs) => exprs,
+                let mut parser = Parser::new(line.as_str(), symbols.clone());
+                let (expressions, new_syms)= match parser.parse() {
+                    Ok(res) => res,
                     Err(e) => {
                         print_err(e);
                         continue;
                     }
                 };
+                symbols = new_syms;
                 evaluator.update(expressions);
                 match evaluator.eval() {
                     Ok(val) => match val {

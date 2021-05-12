@@ -54,11 +54,11 @@ pub struct Parser {
 const FINISHING: [Option<char>; 7] = [Some('('), Some(']'), Some(')'), Some(' '), Some('\t'), Some('\r'), Some('\n')];
 
 impl Parser {
-    pub fn new(input: impl ToString) -> Self {
+    pub fn new(input: impl ToString, symbols: Vec<String>) -> Self {
         let mut to_ret = Self {
             input: input.to_string(),
             output: vec![],
-            symbols: vec![],
+            symbols,
             builtins: vec![],
             line: 0,
             column: 0,
@@ -233,13 +233,7 @@ impl Parser {
             Err(_) => ExprT::Real(raw.parse::<f32>().unwrap_or(3.1415926535897932))
         }, line, column)))    
     }
-    pub fn update_code(&mut self, code: impl ToString) {
-        self.input = "".to_string();
-        self.input = code.to_string();
-        self.start = 0;
-        self.current = 0;
-    }
-    pub fn parse(&mut self) -> Result<Vec<Expr>> {
+    pub fn parse(&mut self) -> Result<(Vec<Expr>, Vec<String>)> {
         while !self.is_at_end() {
             match self.parse_one()? {
                 Some(expr) => self.output.push(expr),
@@ -247,6 +241,6 @@ impl Parser {
             }
             self.start = self.current;
         }
-        Ok(self.output.clone())
+        Ok((self.output.clone(), self.symbols.clone()))
     }
 }
