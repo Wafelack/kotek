@@ -40,7 +40,7 @@ impl Evaluator {
             input,
             vars,
             stack,
-            builtins: vec![Self::add],
+            builtins: vec![Self::add, Self::sub, Self::mul, Self::div, Self::dup],
         }
     }
     pub fn push(&mut self, val: Value) -> Result<()> {
