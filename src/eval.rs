@@ -1,6 +1,6 @@
 use crate::{parser::{Expr, ExprT}, Result, Error, error};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Value {
     Integer(i32),
     Real(f32),
@@ -40,7 +40,7 @@ impl Evaluator {
             input,
             vars: vec![],
             stack: Vec::with_capacity(256),
-            builtins: vec![Self::add, Self::sub, Self::mul, Self::div, Self::r#mod, Self::dup, Self::app, Self::cat, Self::pop_stack, Self::swap, Self::print_stack, Self::eq, Self::not, Self::gt, Self::lt],
+            builtins: vec![Self::add, Self::sub, Self::mul, Self::div, Self::r#mod, Self::dup, Self::app, Self::cat, Self::pop_stack, Self::swap, Self::print_stack, Self::eq, Self::not, Self::gt, Self::lt, Self::r#if],
         }
     }
     pub fn update(&mut self, expressions: Vec<Expr>) {

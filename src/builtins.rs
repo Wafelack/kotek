@@ -182,6 +182,25 @@ impl Evaluator {
             _ => error!(line, column, "Expected a Real or an Integer, found a {}.", lhs.get_type()),
         }
     }
+    pub fn r#if(&mut self, line: usize, column: usize) -> Result<()> {
+        let r#else = self.pop(line, column)?;
+        let then = self.pop(line, column)?;
+        let cond = self.pop(line, column)?;
+        if let Value::Symbol(sym) = cond {
+            let sym = sym.as_str();
+            if sym == "t" {
+                self.push(then)?;
+                self.app(line, column)
+            } else if sym == "f" {
+                self.push(r#else)?;
+                self.app(line, column)
+            } else {
+                error!(line, column, "Expected #t or #f, found #{}.", sym)
+            }
+        } else {
+            error!(line, column, "Expected a Symbol, found a {}.", cond.get_type()) 
+        }
+    }
 }
 
 fn to_sym(b: bool) -> Value {

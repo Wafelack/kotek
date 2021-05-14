@@ -80,6 +80,7 @@ impl Parser {
         to_ret.register_builtin("not");
         to_ret.register_builtin("gt");
         to_ret.register_builtin("lt");
+        to_ret.register_builtin("if");
         to_ret
     }
     fn register_builtin(&mut self, builtin: impl ToString) {
