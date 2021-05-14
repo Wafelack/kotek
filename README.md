@@ -55,3 +55,4 @@ let square ( dup * )
 | `not` | 1 | Symbol | Push `#t` if top of the stack is `#f` and vice-versa. |
 | `gt`  | 2 | Integer/Real/String | Test if a value if greater than another value. |
 | `lt`  | 2 | Integer/Real/String | Test if a value if less than another value. |
+| `if`  | 3 | Symbol-Quote-Quote  | `$cond $then $else if` if $cond, apply $then, and if not, apply $else. |
